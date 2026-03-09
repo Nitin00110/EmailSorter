@@ -27,10 +27,7 @@ public class RedirectEndPoint {
 
                 // 3. Authorization Rules (Specific rules FIRST, catch-all LAST)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        // Public endpoints (Login page, AI testing, Tracking pixel, and Errors)
-                        .requestMatchers("/api/ai/**", "/error", "/track/**", "/home").permitAll()
 
-                        // Catch-all: Everything else requires Google Login
                         .anyRequest().authenticated()
                 )
 
