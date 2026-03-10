@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # 1. THE DATABASE
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: emailsorter-db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. YOUR SPRING BOOT BACKEND
+  backend:
+    build: .
+    container_name: emailsorter-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      MY_API_KEY: ${GEMINI_API_KEY}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${clientId}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${clientSecret}
+    depends_on:
+      - postgres-db
+
+  # 3. YOUR REACT/VITE FRONTEND (NEW!)
+  frontend:
+    build: ./FrontEnd # Tells Docker to look inside the FrontEnd folder for the Dockerfile
+    container_name: emailsorter-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      # Optional: In case Vite needs a specific environment variable to talk to your backend
+      - VITE_API_BASE_URL=http://localhost:8080
+    volumes:
+      # This is the hot-reloading magic! It maps your local FrontEnd folder directly into the container.
+      - ./FrontEnd:/app
+      # This prevents your local Windows node_modules from overwriting the container's Linux node_modules.
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
