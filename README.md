@@ -26,31 +26,24 @@ MailDash is a modern, full-stack email client engineered to provide intelligent 
 
 ## 🚀 Getting Started
 
-Follow these steps to run the application locally.
+This project is fully containerized using Docker, eliminating the need to install Java, Node.js, or PostgreSQL locally.
 
 ### Prerequisites
-* Java 17+ installed
-* Node.js & npm installed
-* PostgreSQL running locally (default port `5432`)
+* **Docker & Docker Compose** installed on your machine.
 * A Google Cloud Project with the **Gmail API enabled** and **OAuth 2.0 Client Credentials** created.
-* A Gemini AI API Key.
+* A **Gemini AI API Key** (from Google AI Studio).
 
-### 1. Backend Setup (Spring Boot)
-1. Open the project in your favorite IDE (IntelliJ, Eclipse, etc.).
-2. Create or update your `src/main/resources/application.properties` file with your credentials:
-   ```properties
-   # PostgreSQL Configuration
-   spring.datasource.url=jdbc:postgresql://localhost:5432/your_database_name
-   spring.datasource.username=your_postgres_username
-   spring.datasource.password=your_postgres_password
-   spring.jpa.hibernate.ddl-auto=update
+### 1. Environment Variables Setup
+We use a "Bring Your Own Key" (BYOK) approach to keep credentials secure.
 
-   # Google OAuth2 Credentials
-   spring.security.oauth2.client.registration.google.client-id=YOUR_GOOGLE_CLIENT_ID
-   spring.security.oauth2.client.registration.google.client-secret=YOUR_GOOGLE_CLIENT_SECRET
-   
-   # Required Scopes (Must include gmail.send to send emails!)
-   spring.security.oauth2.client.registration.google.scope=openid,profile,email,[https://www.googleapis.com/auth/gmail.readonly,https://www.googleapis.com/auth/gmail.send](https://www.googleapis.com/auth/gmail.readonly,https://www.googleapis.com/auth/gmail.send)
-
-   # Gemini AI API Key
-   gemini.api.key=YOUR_GEMINI_API_KEY
+1. Clone the repository and navigate to the root directory.
+2. Locate the `.env.example` file in the root folder.
+3. Duplicate this file and rename the copy to exactly `.env` (this file is git-ignored).
+4. Open your new `.env` file and insert your API keys and Google OAuth credentials:
+   ```env
+   GEMINI_API_KEY=your_actual_key_here
+   clientId=your_google_oauth_client_id
+   clientSecret=your_google_oauth_client_secret
+   DB_NAME=emailsorter_db
+   DB_USER=postgres
+   DB_PASSWORD=local_dev_password_123
